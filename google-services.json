@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "527798118552",
+    "project_id": "minerals-e1b22",
+    "storage_bucket": "minerals-e1b22.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:527798118552:android:244af97bd2b4990daac8ed",
+        "android_client_info": {
+          "package_name": "com.example.minerals"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "527798118552-vebnlajk2s5egvf9k4v2enstveoce2gd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkii1qedFHqxlgwdKQxrpaaKXoGR3A8ss"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "527798118552-vebnlajk2s5egvf9k4v2enstveoce2gd.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
