@@ -1,0 +1,7 @@
+0 Quartz
+1 Pyrite
+2 Muscovite
+3 Malachite
+4 Chrysocolla
+5 Bornite
+6 Biotite
