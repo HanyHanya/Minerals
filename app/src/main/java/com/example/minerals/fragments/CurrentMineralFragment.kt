@@ -59,9 +59,9 @@ class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment()
     }
 
     private fun saveProps() {
-        Mineral.name = binding.nameTextField.toString()
-        Mineral.note = binding.notesTextField.toString()
-        Mineral.type = binding.materialTextField.toString()
+        Mineral.name = binding.nameTextField.text.toString()
+        Mineral.note = binding.notesTextField.text.toString()
+        Mineral.type = binding.materialTextField.text.toString()
     }
 
     private fun setProps(Mineral : Mineral) {

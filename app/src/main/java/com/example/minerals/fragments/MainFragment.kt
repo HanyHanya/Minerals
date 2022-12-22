@@ -71,9 +71,9 @@ class MainFragment() : Fragment() {
     }
 
     private fun saveProps() {
-        Mineral.name = binding.nameTextField.toString()
-        Mineral.note = binding.notesTextField.toString()
-        Mineral.type = binding.materialTextField.toString()
+        Mineral.name = binding.nameTextField.editText?.text.toString()
+        Mineral.note = binding.notesTextField.editText?.text.toString()
+        Mineral.type = binding.materialTextField.text.toString()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {

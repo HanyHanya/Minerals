@@ -6,6 +6,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.PopupMenu
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
 import androidx.recyclerview.widget.LinearLayoutManager
@@ -42,6 +43,7 @@ class ListFragment : Fragment() {
         list.setLayoutManager(LinearLayoutManager(requireContext()));
         adapter = ListImageItemAdapter()
         mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
+//        mMineralsViewModel.nukeTable()
         list.adapter = adapter
         mMineralsViewModel.getAllMinerals.observe(viewLifecycleOwner, Observer {
             adapter.setData(it)
@@ -77,19 +79,19 @@ class ListFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-//        binding.filter.doOnTextChanged { text, _, _, _ ->
-//            if (!text.toString().isBlank()) {
-//                filteredMinerals.clear()
-//                filteredMinerals.addAll(ArrayList(mMineralsViewModel.getAllMinerals.value?.filter { Mineral ->
-//                    Mineral.type.toString().lowercase().contains(text!!.toString().lowercase())
-//                }))
-//                adapter.notifyDataSetChanged()
-//            } else {
-//                filteredMinerals.clear()
-//                filteredMinerals.addAll(mMineralsViewModel.getAllMinerals.value!!)
-//                adapter.notifyDataSetChanged()
-//            }
-//        }
+        binding.filter.doOnTextChanged { text, _, _, _ ->
+            if (!text.toString().isBlank()) {
+                filteredMinerals.clear()
+                filteredMinerals.addAll(ArrayList(mMineralsViewModel.getAllMinerals.value?.filter { Mineral ->
+                    Mineral.type.toString().lowercase().contains(text!!.toString().lowercase())
+                }))
+                adapter.notifyDataSetChanged()
+            } else {
+                filteredMinerals.clear()
+                filteredMinerals.addAll(mMineralsViewModel.getAllMinerals.value!!)
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 }
 
