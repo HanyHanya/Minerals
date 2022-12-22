@@ -1,6 +1,7 @@
 package com.example.minerals.Repositories
 
 import android.annotation.SuppressLint
+import android.content.ContentValues
 import android.content.Context
 import android.database.Cursor
 import android.database.sqlite.SQLiteDatabase
@@ -37,27 +38,64 @@ class MineralSQLiteRepository (context: Context): IRepository, SQLiteOpenHelper(
         var id: String
         var image: Uri?
         var name: String
-        var age: Int?
         var note: String?
         var type: String?
+
+        if(cursor.moveToFirst()) {
+            do {
+                id = cursor.getString(cursor.getColumnIndex(COL_ID))
+                image = Uri.parse(cursor.getString(cursor.getColumnIndex(COL_IMAGE)))
+                name = cursor.getString(cursor.getColumnIndex(COL_NAME))
+                type = cursor.getString(cursor.getColumnIndex(COL_NAME))
+                note = cursor.getString(cursor.getColumnIndex(COL_NAME))
+
+                val Mineral = Mineral(image, id, name, type, note)
+                MineralsList.add(Mineral)
+            } while (cursor.moveToNext())
+        }
 
         return MineralsList
     }
 
     override fun getMineral(id: String) : Mineral {
-        TODO("Not yet implemented")
+        val Mineral = getMineral()
+        return Mineral.filter { Mineral -> Mineral.id == id }[0]
     }
 
     override fun deleteMineral(id: String) {
-        TODO("Not yet implemented")
+        val db = this.writableDatabase
+        val contentValues = ContentValues()
+        contentValues.put(COL_ID, id)
+
+        val success = db.delete(TABLE_NAME, "id=\"" + id + "\"", null)
+
+        db.close()
     }
 
     override fun saveMineral(Mineral: Mineral) {
-        TODO("Not yet implemented")
+        val db = this.writableDatabase
+
+        var contentValues = putContentValues(Mineral)
+
+        val success = db.insertOrThrow(TABLE_NAME, null, contentValues)
+
+        db.close()
+    }
+
+    private fun putContentValues(Mineral: Mineral): ContentValues {
+        val contentValues = ContentValues()
+        contentValues.put(COL_ID, Mineral.id)
+        contentValues.put(COL_IMAGE, Mineral.image.toString())
+        contentValues.put(COL_NAME, Mineral.name)
+        contentValues.put(COL_TYPE, Mineral.type)
+        contentValues.put(COL_NOTE, Mineral.note)
+
+        return contentValues
     }
 
     override fun updateMineral(updatedMineral: Mineral) {
-        TODO("Not yet implemented")
+        deleteMineral(updatedMineral.id)
+        saveMineral(updatedMineral)
     }
 
     override fun onCreate(p0: SQLiteDatabase?) {
@@ -66,7 +104,7 @@ class MineralSQLiteRepository (context: Context): IRepository, SQLiteOpenHelper(
                 COL_IMAGE + " TEXT," +
                 COL_NAME + " TEXT," +
                 COL_TYPE + " TEXT," +
-                COL_NOTE + " TEXT," +
+                COL_NOTE + " TEXT" +
                 ")")
 
         p0?.execSQL(createTable)
