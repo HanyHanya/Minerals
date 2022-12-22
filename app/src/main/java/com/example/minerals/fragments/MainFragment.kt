@@ -3,7 +3,9 @@ package com.example.minerals.fragments
 import android.app.Activity
 import android.content.Intent
 import android.content.Intent.ACTION_OPEN_DOCUMENT
+import android.content.Intent.ACTION_PICK
 import android.graphics.Bitmap
+import android.graphics.BitmapFactory
 import android.os.Bundle
 import android.provider.MediaStore
 import android.util.Log
@@ -16,6 +18,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.minerals.data.Mineral
 import com.example.minerals.data.MineralsViewModel
 import com.example.minerals.databinding.FragmentMainBinding
+import com.example.minerals.helpers.ImageCoder
 import com.example.minerals.ml.MineralsModel
 import org.tensorflow.lite.DataType
 import org.tensorflow.lite.support.common.ops.NormalizeOp
@@ -24,6 +27,7 @@ import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.Rot90Op
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
+
 
 val SELECT_PICTURE: Int = 200
 
@@ -49,7 +53,6 @@ class MainFragment() : Fragment() {
         super.onViewCreated(view, savedInstanceState)
 
         mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
-
         val inputString = requireActivity().application.assets.open(fileName).bufferedReader().use{it.readText()}
         minerallist = inputString.split("\n")
 
@@ -57,7 +60,8 @@ class MainFragment() : Fragment() {
             takePicturePreview.launch(null)
         }
         binding.PickImageButton.setOnClickListener {
-            val gallery = Intent(ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            val gallery = Intent(ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
+            gallery.setType("image/*");
             startActivityForResult(gallery, SELECT_PICTURE)
         }
 
@@ -79,10 +83,10 @@ class MainFragment() : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
-            Mineral.image = data?.data.toString()
             binding.MineralImageView.setImageURI(data?.data)
             val contentResolver = requireActivity().contentResolver
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data?.data)
+            Mineral.image = ImageCoder.encodeBitmap(bitmap)
             outputGenerator( bitmap )
         }
     }
@@ -111,8 +115,9 @@ class MainFragment() : Fragment() {
         val outputs = model.process(inputFeature0)
         val outputFeature0 = outputs.outputFeature0AsTensorBuffer
         var max = outputFeature0.floatArray.maxOrNull()
-        Log.d("Predicted Value", minerallist.elementAt(max!!.toInt()))
-        binding.materialTextField.setText(minerallist.elementAt(max!!.toInt()).substring(2))
+        var indexOfMax = outputFeature0.floatArray.indexOfFirst { f -> f == max }
+        Log.d("Predicted Value", minerallist.elementAt(indexOfMax))
+        binding.materialTextField.setText(minerallist.elementAt(indexOfMax).substring(2))
 
         model.close()
     }

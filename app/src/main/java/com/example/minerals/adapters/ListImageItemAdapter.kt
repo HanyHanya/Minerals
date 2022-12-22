@@ -8,6 +8,7 @@ import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
 import com.example.minerals.data.Mineral
 import com.example.minerals.R
+import com.example.minerals.helpers.ImageCoder
 
 class ListImageItemAdapter:
     RecyclerView.Adapter<ListImageItemAdapter.ViewHolder>() {
@@ -37,7 +38,7 @@ class ListImageItemAdapter:
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val mineral: Mineral = mineralsList.get(position)
-        viewHolder.imageView.setImageURI(Uri.parse(mineral.image))
+        viewHolder.imageView.setImageBitmap(ImageCoder.decodeBitmap(mineral.image))
         viewHolder.firstLineTextView.setText(mineral.note)
         viewHolder.secondLineTextView.setText(mineral.type)
         viewHolder.itemView.setOnClickListener {
