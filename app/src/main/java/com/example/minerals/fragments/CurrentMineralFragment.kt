@@ -14,6 +14,7 @@ import androidx.lifecycle.ViewModelProvider
 import com.example.minerals.data.Mineral
 import com.example.minerals.data.MineralsViewModel
 import com.example.minerals.databinding.FragmentCurrentMineralBinding
+import com.example.minerals.helpers.ImageCoder
 
 class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment() {
     private lateinit var binding: FragmentCurrentMineralBinding
@@ -68,7 +69,7 @@ class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment()
         binding.nameTextField.setText(Mineral.name)
         binding.notesTextField.setText(Mineral.note)
         binding.materialTextField.setText(Mineral.type)
-        binding.MineralImageView.setImageURI(Uri.parse(Mineral.image))
+        binding.MineralImageView.setImageBitmap(ImageCoder.decodeBitmap(Mineral.image))
     }
     private val takePicturePreview = registerForActivityResult(ActivityResultContracts.TakePicturePreview())
     { bitmap ->
