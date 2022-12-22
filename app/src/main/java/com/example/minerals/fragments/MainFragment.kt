@@ -2,7 +2,7 @@ package com.example.minerals.fragments
 
 import android.app.Activity
 import android.content.Intent
-import android.content.pm.PackageManager
+import android.content.Intent.ACTION_OPEN_DOCUMENT
 import android.graphics.Bitmap
 import android.os.Bundle
 import android.provider.MediaStore
@@ -10,14 +10,11 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.RadioButton
-import android.widget.Toast
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.core.content.ContextCompat
 import androidx.fragment.app.Fragment
-import com.example.minerals.Mineral
-import com.example.minerals.Repositories.IRepository
-import com.example.minerals.Repositories.MineralSQLiteRepository
+import androidx.lifecycle.ViewModelProvider
+import com.example.minerals.data.Mineral
+import com.example.minerals.data.MineralsViewModel
 import com.example.minerals.databinding.FragmentMainBinding
 import com.example.minerals.ml.MineralsModel
 import org.tensorflow.lite.DataType
@@ -26,7 +23,6 @@ import org.tensorflow.lite.support.image.ImageProcessor
 import org.tensorflow.lite.support.image.TensorImage
 import org.tensorflow.lite.support.image.ops.ResizeOp
 import org.tensorflow.lite.support.image.ops.Rot90Op
-import org.tensorflow.lite.support.image.ops.TransformToGrayscaleOp
 import org.tensorflow.lite.support.tensorbuffer.TensorBuffer
 
 val SELECT_PICTURE: Int = 200
@@ -34,8 +30,8 @@ val SELECT_PICTURE: Int = 200
 
 class MainFragment() : Fragment() {
     private lateinit var binding: FragmentMainBinding
-    private var Mineral = Mineral()
-    private lateinit var MineralRepository: IRepository
+    private var Mineral = Mineral(0)
+    private lateinit var mMineralsViewModel: MineralsViewModel
     val fileName = "labels.txt"
     private lateinit var minerallist : List<String>
 
@@ -52,7 +48,7 @@ class MainFragment() : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        MineralRepository = MineralSQLiteRepository(requireContext())
+        mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
 
         val inputString = requireActivity().application.assets.open(fileName).bufferedReader().use{it.readText()}
         minerallist = inputString.split("\n")
@@ -61,13 +57,13 @@ class MainFragment() : Fragment() {
             takePicturePreview.launch(null)
         }
         binding.PickImageButton.setOnClickListener {
-            val gallery = Intent(Intent.ACTION_PICK, MediaStore.Images.Media.INTERNAL_CONTENT_URI)
+            val gallery = Intent(ACTION_OPEN_DOCUMENT, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             startActivityForResult(gallery, SELECT_PICTURE)
         }
 
         binding.addBtn.setOnClickListener {
             saveProps()
-            MineralRepository.saveMineral(Mineral)
+            mMineralsViewModel.addMineral(Mineral)
             onMineralAdded?.invoke(Mineral)
         }
 
@@ -83,7 +79,7 @@ class MainFragment() : Fragment() {
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
         if (resultCode == Activity.RESULT_OK && requestCode == SELECT_PICTURE) {
-            Mineral.image = data?.data
+            Mineral.image = data?.data.toString()
             binding.MineralImageView.setImageURI(data?.data)
             val contentResolver = requireActivity().contentResolver
             val bitmap = MediaStore.Images.Media.getBitmap(contentResolver, data?.data)

@@ -2,8 +2,6 @@ package com.example.minerals
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import com.example.minerals.Repositories.IRepository
-import com.example.minerals.Repositories.MineralSQLiteRepository
 import com.example.minerals.databinding.ActivityMainBinding
 import com.example.minerals.Services.FragmentManagerService
 import com.example.minerals.fragments.MainFragment
@@ -13,11 +11,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var binding: ActivityMainBinding
     private lateinit var listFragment: ListFragment
     private lateinit var addMineralFragment: MainFragment
-    private lateinit var MineralRepository: IRepository
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        MineralRepository = MineralSQLiteRepository(this)
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
         listFragment = ListFragment()

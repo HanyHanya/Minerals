@@ -6,6 +6,9 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.ACTION_OPEN_DOCUMENT" />
+    <uses-permission android:name="android.permission.MANAGE_DOCUMENTS"
+        tools:ignore="ProtectedPermissions" />
 
     <application
         android:allowBackup="true"
@@ -16,6 +19,7 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Minerals"
         tools:targetApi="31">
+
         <activity
             android:name=".MainActivity"
             android:exported="true">

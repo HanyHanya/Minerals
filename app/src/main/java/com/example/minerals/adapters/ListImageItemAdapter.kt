@@ -1,37 +1,31 @@
 package com.example.minerals.adapters
 
+import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
 import androidx.recyclerview.widget.RecyclerView
-import com.example.minerals.Mineral
+import com.example.minerals.data.Mineral
 import com.example.minerals.R
 
-class ListImageItemAdapter internal constructor(private val dataSource: ArrayList<Mineral>) :
+class ListImageItemAdapter:
     RecyclerView.Adapter<ListImageItemAdapter.ViewHolder>() {
     var onItemClick: ((Mineral) -> Unit)? = null
     var onItemLongClick: ((Mineral) -> Unit)? = null
 
-    inner class ViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
-        val imageView = itemView.findViewById<ImageView>(R.id.image)
-        val firstLineTextView = itemView.findViewById<TextView>(R.id.firstLine)
-        val secondLineTextView = itemView.findViewById<TextView>(R.id.secondLine)
+    private var mineralsList: List<Mineral> = emptyList()
+
+    class ViewHolder(view: View) : RecyclerView.ViewHolder(view) {
+        val imageView: ImageView
+        val firstLineTextView: TextView
+        val secondLineTextView: TextView
 
         init {
-            itemView.setOnClickListener {
-                onItemClick?.invoke(dataSource[adapterPosition])
-            }
-
-            itemView.setOnLongClickListener {
-                onItemLongClick?.invoke(dataSource[adapterPosition])
-                true
-            }
+            imageView = itemView.findViewById<ImageView>(R.id.image)
+            firstLineTextView = itemView.findViewById<TextView>(R.id.firstLine)
+            secondLineTextView = itemView.findViewById<TextView>(R.id.secondLine)
         }
-    }
-
-    override fun getItemId(position: Int): Long {
-        return position.toLong()
     }
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): ViewHolder {
@@ -42,14 +36,24 @@ class ListImageItemAdapter internal constructor(private val dataSource: ArrayLis
     }
 
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
-        val Mineral: Mineral = dataSource.get(position)
-        val imageView = viewHolder.imageView
-        imageView.setImageURI(Mineral.image)
-        val firstLineTextView = viewHolder.firstLineTextView
-        firstLineTextView.setText(Mineral.name)
-        val secondLineTextView = viewHolder.secondLineTextView
-        secondLineTextView.setText(Mineral.type)
+        val mineral: Mineral = mineralsList.get(position)
+        viewHolder.imageView.setImageURI(Uri.parse(mineral.image))
+        viewHolder.firstLineTextView.setText(mineral.note)
+        viewHolder.secondLineTextView.setText(mineral.type)
+        viewHolder.itemView.setOnClickListener {
+            onItemClick?.invoke(mineralsList[position])
+        }
+
+        viewHolder.itemView.setOnLongClickListener {
+            onItemLongClick?.invoke(mineralsList[position])
+            true
+        }
     }
 
-    override fun getItemCount(): Int { return dataSource.size }
+    override fun getItemCount(): Int { return mineralsList.count() }
+
+    fun setData(minerals: List<Mineral>) {
+        this.mineralsList = minerals
+        notifyDataSetChanged()
+    }
 }
