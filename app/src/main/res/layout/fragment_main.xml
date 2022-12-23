@@ -30,13 +30,13 @@
                     android:layout_height="wrap_content"
                     android:orientation="horizontal"
                     android:layout_gravity="center_horizontal">
-                    <Button
+                    <!--<Button
                         android:id="@+id/NewImageButton"
                         style="@style/Widget.App.Button.OutlinedButton.IconOnly"
                         android:layout_width="100dp"
                         android:layout_height="30dp"
                         android:layout_marginHorizontal="8dp"
-                        android:text="Add new" />
+                        android:text="Add new" />-->
                     <Button
                         android:id="@+id/PickImageButton"
                         style="@style/Widget.App.Button.OutlinedButton.IconOnly"

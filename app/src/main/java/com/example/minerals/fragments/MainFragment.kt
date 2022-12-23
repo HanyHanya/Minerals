@@ -56,9 +56,12 @@ class MainFragment() : Fragment() {
         val inputString = requireActivity().application.assets.open(fileName).bufferedReader().use{it.readText()}
         minerallist = inputString.split("\n")
 
-        binding.NewImageButton.setOnClickListener {
+        /*binding.NewImageButton.setOnClickListener {
+            val ACTION_IMAGE_CAPTURE = 1
+            val camera = Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE)
+            startActivityForResult(camera, ACTION_IMAGE_CAPTURE)
             takePicturePreview.launch(null)
-        }
+        }*/
         binding.PickImageButton.setOnClickListener {
             val gallery = Intent(ACTION_PICK, MediaStore.Images.Media.EXTERNAL_CONTENT_URI)
             gallery.setType("image/*");
