@@ -14,7 +14,7 @@ import androidx.room.RoomDatabase
 
 val DATABASE_NAME = "MINERALS_DATABASE"
 
-@Database(entities = [Mineral::class], version = 1, exportSchema = false)
+@Database(entities = [Mineral::class], version = 1, exportSchema = true)
 abstract class MineralsDatabase: RoomDatabase() {
 
     abstract fun minrealsDao(): MineralDao
@@ -33,7 +33,9 @@ abstract class MineralsDatabase: RoomDatabase() {
                     context.applicationContext,
                     MineralsDatabase::class.java,
                     DATABASE_NAME
-                ).build()
+                )
+                    .fallbackToDestructiveMigration()
+                    .build()
 
                 INSTANCE = instance
                 return instance
