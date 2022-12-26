@@ -18,19 +18,12 @@ import com.example.minerals.data.Quality
 import com.example.minerals.databinding.FragmentCurrentMineralBinding
 import com.example.minerals.helpers.ImageCoder
 
-class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment() {
+class CurrentMineralFragment (var MineralToUpdate: Mineral? = null) : Fragment() {
     private lateinit var binding: FragmentCurrentMineralBinding
     private lateinit var qualityAdapter: ArrayAdapter<Quality>
-    private var Mineral = Mineral(0)
     private lateinit var mMineralsViewModel: MineralsViewModel
 
-    var onMineralAdded: ((Mineral) -> Unit)? = null
-
-    init {
-        if(MineralToUpdate != null) {
-            Mineral = MineralToUpdate
-        }
-    }
+    var onMineralEdit: (() -> Unit)? = null
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -42,6 +35,14 @@ class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment()
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
+
+        qualityAdapter = ArrayAdapter<Quality>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            Quality.values()
+        )
+        binding.qualitySpinner.adapter = qualityAdapter
+
         binding.NewImageButton.setOnClickListener {
             takePicturePreview.launch(null)
         }
@@ -51,25 +52,26 @@ class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment()
         }
         binding.saveBtn.setOnClickListener {
             saveProps()
-            mMineralsViewModel.updateMineral(Mineral)
-            onMineralAdded?.invoke(Mineral)
+            mMineralsViewModel.updateMineral(MineralToUpdate!!)
+            onMineralEdit?.invoke()
         }
         binding.delBtn.setOnClickListener {
-            mMineralsViewModel.deleteMineral(Mineral)
+            mMineralsViewModel.deleteMineral(MineralToUpdate!!)
         }
+
         if (MineralToUpdate != null) {
-            setProps(Mineral)
+            setProps(MineralToUpdate!!)
         }
     }
 
     private fun saveProps() {
-        Mineral.quality =
+        MineralToUpdate!!.quality =
             Quality.convertToQuality(binding.qualitySpinner.selectedItem.toString())
-        Mineral.name = binding.nameTextField.editText?.text.toString()
-        Mineral.type = binding.materialTextField.text.toString()
-        Mineral.subtype = binding.subtypeTextField.editText?.text.toString()
-        Mineral.weight = binding.weightTextField.editText?.text.toString()
-        Mineral.location = binding.locationTextField.editText?.text.toString()
+        MineralToUpdate!!.name = binding.nameTextField.editText?.text.toString()
+        MineralToUpdate!!.type = binding.materialTextField.text.toString()
+        MineralToUpdate!!.subtype = binding.subtypeTextField.editText?.text.toString()
+        MineralToUpdate!!.weight = binding.weightTextField.editText?.text.toString()
+        MineralToUpdate!!.location = binding.locationTextField.editText?.text.toString()
     }
 
     private fun setProps(Mineral : Mineral) {

@@ -47,7 +47,14 @@ class ListFragment : Fragment() {
         mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
         list.adapter = adapter
         mMineralsViewModel.getAllMinerals.observe(viewLifecycleOwner, Observer {
-            adapter.setData(it)
+            binding.filter.text?.clear()
+            filteredMinerals.clear()
+            if (filteredMinerals.count() == 0) {
+                adapter.setData(it)
+            }
+            else {
+                adapter.setData(filteredMinerals)
+            }
         })
 
         adapter.onItemClick = {
@@ -86,13 +93,13 @@ class ListFragment : Fragment() {
                 filteredMinerals.addAll(ArrayList(
                     mMineralsViewModel.getAllMinerals.value!!.filter
                 { Mineral ->
-                    Mineral.type.contains(text!!.toString().lowercase())
+                    Mineral.type.lowercase().contains(text!!.toString().lowercase())
                 }))
-                adapter.notifyDataSetChanged()
+                adapter.setData(filteredMinerals)
             } else {
                 filteredMinerals.clear()
                 filteredMinerals.addAll(mMineralsViewModel.getAllMinerals.value!!)
-                adapter.notifyDataSetChanged()
+                adapter.setData(filteredMinerals)
             }
         }
     }
