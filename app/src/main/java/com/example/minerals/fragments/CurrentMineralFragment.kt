@@ -9,15 +9,18 @@ import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.lifecycle.ViewModelProvider
 import com.example.minerals.data.Mineral
 import com.example.minerals.data.MineralsViewModel
+import com.example.minerals.data.Quality
 import com.example.minerals.databinding.FragmentCurrentMineralBinding
 import com.example.minerals.helpers.ImageCoder
 
 class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment() {
     private lateinit var binding: FragmentCurrentMineralBinding
+    private lateinit var qualityAdapter: ArrayAdapter<Quality>
     private var Mineral = Mineral(0)
     private lateinit var mMineralsViewModel: MineralsViewModel
 
@@ -60,14 +63,22 @@ class CurrentMineralFragment (val MineralToUpdate: Mineral? = null) : Fragment()
     }
 
     private fun saveProps() {
-        Mineral.name = binding.nameTextField.text.toString()
-        Mineral.note = binding.notesTextField.text.toString()
+        Mineral.quality =
+            Quality.convertToQuality(binding.qualitySpinner.selectedItem.toString())
+        Mineral.name = binding.nameTextField.editText?.text.toString()
         Mineral.type = binding.materialTextField.text.toString()
+        Mineral.subtype = binding.subtypeTextField.editText?.text.toString()
+        Mineral.weight = binding.weightTextField.editText?.text.toString()
+        Mineral.location = binding.locationTextField.editText?.text.toString()
     }
 
     private fun setProps(Mineral : Mineral) {
-        binding.nameTextField.setText(Mineral.name)
-        binding.notesTextField.setText(Mineral.note)
+        var position = qualityAdapter.getPosition(Mineral.quality)
+        binding.qualitySpinner.setSelection(position)
+        binding.nameTextField.editText?.setText(Mineral.name)
+        binding.subtypeTextField.editText?.setText(Mineral.subtype)
+        binding.locationTextField.editText?.setText(Mineral.location)
+        binding.weightTextField.editText?.setText(Mineral.weight)
         binding.materialTextField.setText(Mineral.type)
         binding.MineralImageView.setImageBitmap(ImageCoder.decodeBitmap(Mineral.image))
     }

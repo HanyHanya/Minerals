@@ -12,11 +12,13 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.ViewModelProvider
 import com.example.minerals.data.Mineral
 import com.example.minerals.data.MineralsViewModel
+import com.example.minerals.data.Quality
 import com.example.minerals.databinding.FragmentMainBinding
 import com.example.minerals.helpers.ImageCoder
 import com.example.minerals.ml.MineralsModel
@@ -36,6 +38,7 @@ class MainFragment() : Fragment() {
     private lateinit var binding: FragmentMainBinding
     private var Mineral = Mineral(0)
     private lateinit var mMineralsViewModel: MineralsViewModel
+    private lateinit var qualityAdapter: ArrayAdapter<Quality>
     val fileName = "labels.txt"
     private lateinit var minerallist : List<String>
 
@@ -55,6 +58,14 @@ class MainFragment() : Fragment() {
         mMineralsViewModel = ViewModelProvider(this).get(MineralsViewModel::class.java)
         val inputString = requireActivity().application.assets.open(fileName).bufferedReader().use{it.readText()}
         minerallist = inputString.split("\n")
+
+        qualityAdapter = ArrayAdapter<Quality>(
+            requireContext(),
+            android.R.layout.simple_spinner_item,
+            Quality.values()
+        )
+
+        binding.qualitySpinner.adapter = qualityAdapter
 
         /*binding.NewImageButton.setOnClickListener {
             val ACTION_IMAGE_CAPTURE = 1
@@ -78,9 +89,13 @@ class MainFragment() : Fragment() {
     }
 
     private fun saveProps() {
+        Mineral.quality =
+            Quality.convertToQuality(binding.qualitySpinner.selectedItem.toString())
         Mineral.name = binding.nameTextField.editText?.text.toString()
-        Mineral.note = binding.notesTextField.editText?.text.toString()
         Mineral.type = binding.materialTextField.text.toString()
+        Mineral.subtype = binding.subtypeTextField.editText?.text.toString()
+        Mineral.weight = binding.weightTextField.editText?.text.toString()
+        Mineral.location = binding.locationTextField.editText?.text.toString()
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
@@ -93,14 +108,14 @@ class MainFragment() : Fragment() {
             outputGenerator( bitmap )
         }
     }
-    //gallery
+    /*//gallery
     private val takePicturePreview = registerForActivityResult(ActivityResultContracts.TakePicturePreview())
     { bitmap ->
         if (bitmap != null) {
             binding.MineralImageView.setImageBitmap(bitmap)
             outputGenerator(bitmap)
         }
-    }
+    }*/
 
     private fun outputGenerator(bitmap: Bitmap){
         val model = MineralsModel.newInstance(requireContext())

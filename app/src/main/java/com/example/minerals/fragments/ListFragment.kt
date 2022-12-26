@@ -1,6 +1,8 @@
 package com.example.minerals.fragments
 
+import android.annotation.SuppressLint
 import android.os.Bundle
+import android.util.Log
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -61,6 +63,10 @@ class ListFragment : Fragment() {
                         mMineralsViewModel.deleteMineral(it)
                         true
                     }
+                    R.id.action_update -> {
+                        onMineralEdit?.invoke(it)
+                        true
+                    }
                     else -> true
                 }
 
@@ -71,22 +77,24 @@ class ListFragment : Fragment() {
         return binding.root
     }
 
+    @SuppressLint("NotifyDataSetChanged")
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-//        binding.filter.doOnTextChanged { text, _, _, _ ->
-//            if (!text.toString().isBlank()) {
-//                filteredMinerals.clear()
-//                filteredMinerals.addAll(ArrayList(mMineralsViewModel.getAllMinerals.value?.filter { Mineral ->
-//                    Mineral.type.toString().lowercase().contains(text!!.toString().lowercase())
-//                }))
-//                adapter.notifyDataSetChanged()
-//            } else {
-//                filteredMinerals.clear()
-//                filteredMinerals.addAll(mMineralsViewModel.getAllMinerals.value!!)
-//                adapter.notifyDataSetChanged()
-//            }
-//        }
+        binding.filter.doOnTextChanged { text, _, _, _ ->
+            if (!text.toString().isBlank()) {
+                filteredMinerals.clear()
+                filteredMinerals.addAll(ArrayList(
+                    mMineralsViewModel.getAllMinerals.value!!.filter
+                { Mineral ->
+                    Mineral.type.contains(text!!.toString().lowercase())
+                }))
+                adapter.notifyDataSetChanged()
+            } else {
+                filteredMinerals.clear()
+                filteredMinerals.addAll(mMineralsViewModel.getAllMinerals.value!!)
+                adapter.notifyDataSetChanged()
+            }
+        }
     }
 }
 
