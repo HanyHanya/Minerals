@@ -1,5 +1,6 @@
 package com.example.minerals.adapters
 
+import android.annotation.SuppressLint
 import android.net.Uri
 import android.view.LayoutInflater
 import android.view.View
@@ -39,7 +40,7 @@ class ListImageItemAdapter:
     override fun onBindViewHolder(viewHolder: ViewHolder, position: Int) {
         val mineral: Mineral = mineralsList.get(position)
         viewHolder.imageView.setImageBitmap(ImageCoder.decodeBitmap(mineral.image))
-        viewHolder.firstLineTextView.setText(mineral.note)
+        viewHolder.firstLineTextView.setText(mineral.subtype)
         viewHolder.secondLineTextView.setText(mineral.type)
         viewHolder.itemView.setOnClickListener {
             onItemClick?.invoke(mineralsList[position])
@@ -53,6 +54,7 @@ class ListImageItemAdapter:
 
     override fun getItemCount(): Int { return mineralsList.count() }
 
+    @SuppressLint("NotifyDataSetChanged")
     fun setData(minerals: List<Mineral>) {
         this.mineralsList = minerals
         notifyDataSetChanged()
